@@ -29,7 +29,7 @@ namespace XUnitMoqDemo
         {
             // Arrange
             _mockEmpRepo.Setup(repo => repo.GetAll())
-                .ReturnsAsync(DataSeeder.MockDataEmployees());
+                .ReturnsAsync(DataSeeder.MockEmployees);
 
             // Act
             var result = _employeeController.GetAll().Result;
@@ -41,6 +41,40 @@ namespace XUnitMoqDemo
             var employees = Assert.IsAssignableFrom<IEnumerable<Employee>>(okResult.Value);
             Assert.NotNull(employees);
             Assert.Equal(3, employees.Count());
+        }
+
+        [Fact]
+        public void GetEmployee_ParamIdIsRandom_ShouldReturnNotFound()
+        {
+            // Arrange
+
+            // Act
+            var result = _employeeController.GetEmployee(Guid.NewGuid()).Result;
+
+            // Assert
+            //Assert.Null(result);
+            var notFoundResult = Assert.IsAssignableFrom<NotFoundResult>(result);
+            Assert.Equal((int)HttpStatusCode.NotFound, notFoundResult.StatusCode);
+        }
+
+        [Fact]
+        public void GetEmployee_ParamIdIsCorrect_ShouldReturnEmployee()
+        {
+            // Arrange
+            _mockEmpRepo.Setup(repo => repo.GetById(DataSeeder.SingleEmployeeId))
+                .ReturnsAsync(DataSeeder.MockSingleEmployee);
+
+            // Act
+            var result = _employeeController.GetEmployee(DataSeeder.SingleEmployeeId).Result;
+
+            // Assert
+            var okResult = Assert.IsAssignableFrom<OkObjectResult>(result);
+            Assert.Equal((int)HttpStatusCode.OK, okResult.StatusCode);
+
+            var employee = Assert.IsAssignableFrom<Employee>(okResult.Value);
+            Assert.Equal(DataSeeder.MockSingleEmployee().Id, employee.Id);
+            Assert.Equal(DataSeeder.MockSingleEmployee().Name, employee.Name);
+            Assert.Equal(DataSeeder.MockSingleEmployee().Department, employee.Department);
         }
     }
 }

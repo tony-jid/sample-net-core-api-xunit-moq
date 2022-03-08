@@ -17,14 +17,26 @@ namespace SampleEFCoreXUnitMoq.Data.Contexts.Master
                 if (context.Employees.Any()) return;
 
                 context.Employees.AddRangeAsync(
-                    MockDataEmployees()
+                    MockEmployees()
                 );
 
                 context.SaveChanges();
             }
         }
 
-        public static List<Employee> MockDataEmployees()
+        public static Guid SingleEmployeeId = new Guid("4a968bbb-af79-4ff2-988c-1c5f80ade75d");
+        public static Employee MockSingleEmployee()
+        {
+            return new Employee()
+            {
+                Id = SingleEmployeeId,
+                Name = "Tony",
+                Department = "IT",
+                Salary = 100000
+            };
+        }
+
+        public static List<Employee> MockEmployees()
         {
             return new List<Employee>()
             {

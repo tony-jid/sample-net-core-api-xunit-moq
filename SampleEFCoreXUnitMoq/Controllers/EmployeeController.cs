@@ -33,7 +33,7 @@ namespace SampleEFCoreXUnitMoq.Controllers
 
         // GET: api/Employee/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(Guid id)
+        public async Task<IActionResult> GetEmployee(Guid id)
         {
             var employee = await _employeeRepo.GetById(id);
 
@@ -42,7 +42,7 @@ namespace SampleEFCoreXUnitMoq.Controllers
                 return NotFound();
             }
 
-            return employee;
+            return Ok(employee);
         }
 
         // PUT: api/Employee/5
@@ -69,7 +69,7 @@ namespace SampleEFCoreXUnitMoq.Controllers
 
         // DELETE: api/Employee/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Employee>> DeleteEmployee(Guid id)
+        public async Task<IActionResult> DeleteEmployee(Guid id)
         {
             var employee = await _employeeRepo.GetById(id);
             if (employee == null)
@@ -79,7 +79,7 @@ namespace SampleEFCoreXUnitMoq.Controllers
 
             await _employeeRepo.Remove(employee);
 
-            return employee;
+            return Ok(employee);
         }
     }
 }
