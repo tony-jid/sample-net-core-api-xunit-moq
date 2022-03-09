@@ -49,19 +49,24 @@ namespace SampleEFCoreXUnitMoq.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEmployee(Guid id, Employee employee)
         {
-            if (id != employee.Id) return BadRequest();
+            if (id == Guid.Empty) return BadRequest();
+            if (string.IsNullOrWhiteSpace(employee.Name)) return BadRequest();
 
+            employee.Id = id;
             var updatedEmployee = await _employeeRepo.Update(employee);
 
             if (updatedEmployee == null) return BadRequest();
 
-            return NoContent();
+            return Ok(updatedEmployee);
         }
 
         // POST: api/Employee
         [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+        public async Task<IActionResult> PostEmployee(Employee employee)
         {
+            if (employee == null) return BadRequest();
+            if (string.IsNullOrWhiteSpace(employee.Name)) return BadRequest();
+
             await _employeeRepo.Add(employee);
 
             return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
@@ -71,6 +76,8 @@ namespace SampleEFCoreXUnitMoq.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
+            if (id == Guid.Empty) return BadRequest();
+
             var employee = await _employeeRepo.GetById(id);
             if (employee == null)
             {
